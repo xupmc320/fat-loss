@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>減脂小幫手</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>減脂日誌</h1>
+            <p class="subtitle">簡單，才能持之以恆</p>
+        </header>
+
+        <main>
+            <section class="card">
+                <h2>今日飲食</h2>
+                <div class="food-selector">
+                    <label for="food-search">新增食物：</label>
+                    <input type="text" id="food-search" placeholder="搜尋食物 (例：雞腿)">
+                    <button id="add-food-btn">新增</button>
+                </div>
+                <ul id="daily-log-list" class="log-list">
+                    <li class="placeholder">今天還沒有紀錄喔！</li>
+                </ul>
+            </section>
+
+            <section class="card bonus-card">
+                <h2>今日活動 (加分項！)</h2>
+                <div class="exercise-form">
+                    <input type="text" id="exercise-desc" placeholder="活動描述 (例：快走30分鐘)">
+                    <input type="number" id="exercise-calories" placeholder="消耗熱量(可選填)">
+                    <button id="add-exercise-btn">記錄活動</button>
+                </div>
+                <ul id="exercise-log-list" class="log-list">
+                    </ul>
+            </section>
+
+            <section class="card summary-card">
+                <h2>今日總結</h2>
+                <div class="summary-grid">
+                    <div>
+                        <p class="summary-label">攝取熱量</p>
+                        <p id="total-calories" class="summary-value">0 kcal</p>
+                    </div>
+                    <div>
+                        <p class="summary-label">消耗熱量</p>
+                        <p id="burned-calories" class="summary-value">0 kcal</p>
+                    </div>
+                    <div>
+                        <p class="summary-label">熱量結餘</p>
+                        <p id="balance-calories" class="summary-value">0 kcal</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
