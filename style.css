@@ -123,3 +123,18 @@ button[type="submit"]:hover {
 .hidden {
     display: none;
 }
+/* ... (舊的 CSS 內容完全不變，只需在最底下加上這段) ... */
+#feedback-section {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #eaf2f8;
+    border: 1px solid #aed6f1;
+}
+
+#feedback-text {
+    margin: 0;
+    text-align: center;
+    color: #1b4f72;
+    line-height: 1.6;
+}
