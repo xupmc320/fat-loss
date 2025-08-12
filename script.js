@@ -31,11 +31,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let todayLog = { breakfast: [], lunch: [], dinner: [], exercise: [] };
 
     function getTodayKey() { const today = new Date(); return `log_${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}`; }
+    
     function loadData() {
         userProfile = JSON.parse(localStorage.getItem('userProfile')) || null;
         const savedLog = JSON.parse(localStorage.getItem(getTodayKey()));
-        if (savedLog) { todayLog = savedLog; }
+        // 如果有當日紀錄，就載入，否則使用預設的空物件
+        if (savedLog) {
+            todayLog = savedLog;
+        } else {
+            todayLog = { breakfast: [], lunch: [], dinner: [], exercise: [] };
+        }
     }
+
     function saveData() { localStorage.setItem(getTodayKey(), JSON.stringify(todayLog)); }
 
     function generateFeedback(totals) {
@@ -60,13 +67,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function render() {
-        for (const meal in logLists) {
-            const listEl = logLists[meal];
+        if (!userProfile) return; // 如果沒有 profile，不執行渲染
+
+        for (const key in logLists) {
+            const listEl = logLists[key];
             listEl.innerHTML = '';
-            if(todayLog[meal]) {
-                todayLog[meal].forEach(item => {
+            if(todayLog[key] && todayLog[key].length > 0) {
+                todayLog[key].forEach(item => {
                     const li = document.createElement('li');
-                    if (meal === 'exercise') {
+                    if (key === 'exercise') {
                         li.textContent = `${item.desc} - ${item.calories} kcal`;
                     } else {
                         li.textContent = `${item.name} - ${item.calories} kcal / ${item.protein}g 蛋白`;
@@ -76,9 +85,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
-        const totalCalories = ['breakfast', 'lunch', 'dinner'].reduce((sum, meal) => sum + todayLog[meal].reduce((s, item) => s + item.calories, 0), 0);
-        const totalProtein = ['breakfast', 'lunch', 'dinner'].reduce((sum, meal) => sum + todayLog[meal].reduce((s, item) => s + item.protein, 0), 0);
-        const burnedCalories = todayLog.exercise.reduce((sum, item) => sum + item.calories, 0);
+        const totalCalories = ['breakfast', 'lunch', 'dinner'].reduce((sum, meal) => sum + (todayLog[meal] ? todayLog[meal].reduce((s, item) => s + item.calories, 0) : 0), 0);
+        const totalProtein = ['breakfast', 'lunch', 'dinner'].reduce((sum, meal) => sum + (todayLog[meal] ? todayLog[meal].reduce((s, item) => s + item.protein, 0) : 0), 0);
+        const burnedCalories = todayLog.exercise ? todayLog.exercise.reduce((sum, item) => sum + item.calories, 0) : 0;
         
         summary.totalCalories.textContent = `${totalCalories} kcal`;
         summary.totalProtein.textContent = `${totalProtein} g`;
@@ -97,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!foodName) return;
         const foodItem = foodDatabase.find(food => food.name.includes(foodName));
         if (foodItem) {
+            if (!todayLog[mealType]) todayLog[mealType] = [];
             todayLog[mealType].push(foodItem);
             saveData();
             render();
@@ -136,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!profile.age || !profile.weight || !profile.height) { alert('請填寫所有欄位！'); return; }
         profile.tdee = calculateTDEE(profile);
         saveProfile(profile);
-        userProfile = profile; // 更新當前的 profile
+        userProfile = profile;
         
         const tdeeResultEl = document.getElementById('tdee-result');
         tdeeResultEl.textContent = `計算結果：您的 TDEE 約為 ${profile.tdee} kcal`;
