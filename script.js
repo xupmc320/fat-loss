@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- A. 取得所有需要操作的 HTML 元素 ---
     const profileSection = document.getElementById('profile-section');
     const mainAppSection = document.getElementById('main-app');
     const profileForm = document.getElementById('profile-form');
@@ -18,24 +19,44 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const feedbackTextEl = document.getElementById('feedback-text');
 
-    const foodDatabase = [
-        { name: '白飯', calories: 280, protein: 5 }, { name: '糙米飯', calories: 220, protein: 6 },
-        { name: '雞腿', calories: 350, protein: 30 }, { name: '排骨', calories: 400, protein: 25 },
-        { name: '雞胸肉', calories: 180, protein: 35 }, { name: '炒青菜', calories: 150, protein: 3 },
-        { name: '蒸蛋', calories: 130, protein: 12 }, { name: '貢丸湯', calories: 200, protein: 10 },
-        { name: '滷蛋', calories: 90, protein: 7 }, { name: '無糖豆漿', calories: 110, protein: 10 },
-        { name: '乳清蛋白', calories: 150, protein: 25 }, { name: '鮭魚', calories: 250, protein: 22 }
-    ];
-
+    // --- B. 資料庫與狀態管理 ---
+    let foodDatabase = []; // 預設為空陣列，將從 food.json 載入
     let userProfile = {};
     let todayLog = { breakfast: [], lunch: [], dinner: [], exercise: [] };
 
-    function getTodayKey() { const today = new Date(); return `log_${today.getFullYear()}-${today.getMonth()+1}-${today.getDate()}`; }
-    
+    // --- C. 核心功能函式 ---
+
+    // 取得今天的日期字串，作為 localStorage 的 key
+    function getTodayKey() {
+        const today = new Date();
+        // 格式化成 YYYY-MM-DD，確保月份和日期是兩位數
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return `log_${today.getFullYear()}-${month}-${day}`;
+    }
+
+    // 非同步載入食物資料庫
+    async function loadFoodDatabase() {
+        try {
+            const response = await fetch('food.json');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            foodDatabase = await response.json();
+        } catch (error) {
+            console.error('無法從 food.json 載入資料庫:', error);
+            // 如果載入失敗，使用內建的簡易版作為備用
+            foodDatabase = [
+                { name: '白飯', calories: 280, protein: 5 },
+                { name: '雞胸肉', calories: 180, protein: 35 },
+                { name: '炒青菜', calories: 150, protein: 3 }
+            ];
+        }
+    }
+
     function loadData() {
         userProfile = JSON.parse(localStorage.getItem('userProfile')) || null;
         const savedLog = JSON.parse(localStorage.getItem(getTodayKey()));
-        // 如果有當日紀錄，就載入，否則使用預設的空物件
         if (savedLog) {
             todayLog = savedLog;
         } else {
@@ -43,7 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function saveData() { localStorage.setItem(getTodayKey(), JSON.stringify(todayLog)); }
+    function saveData() {
+        localStorage.setItem(getTodayKey(), JSON.stringify(todayLog));
+    }
 
     function generateFeedback(totals) {
         const { totalCalories, totalProtein, burnedCalories } = totals;
@@ -53,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const proteinShortfall = proteinGoal - totalProtein;
 
         if (proteinShortfall > 15 && totalCalories > 0) {
-             return `今天的蛋白質有點不夠喔 (目標: ${proteinGoal}g, 目前: ${totalProtein}g)。要不要試著在點心時間補充一份乳清蛋白或無糖豆漿呢？`;
+            return `今天的蛋白質有點不夠喔 (目標: ${proteinGoal}g, 目前: ${totalProtein}g)。要不要試著在點心時間補充一份乳清蛋白或無糖豆漿呢？`;
         }
         if (deficit > 800) {
             return `今天有點過頭了，熱量赤字達到 ${deficit} 大卡。減脂是長期抗戰，別給自己太大的壓力，吃太少反而會讓代謝變慢喔~`;
@@ -65,21 +88,29 @@ document.addEventListener('DOMContentLoaded', () => {
             return `今天稍微超標了 ${Math.abs(deficit)} 大卡。沒關係的，減脂路上偶爾需要放鬆！明天回到正軌就好，千萬別因此焦慮。`;
         }
     }
-
+    
     function render() {
-        if (!userProfile) return; // 如果沒有 profile，不執行渲染
+        if (!userProfile) return;
 
         for (const key in logLists) {
             const listEl = logLists[key];
             listEl.innerHTML = '';
-            if(todayLog[key] && todayLog[key].length > 0) {
-                todayLog[key].forEach(item => {
+            if (todayLog[key] && todayLog[key].length > 0) {
+                todayLog[key].forEach((item, index) => {
                     const li = document.createElement('li');
+                    const textSpan = document.createElement('span');
                     if (key === 'exercise') {
-                        li.textContent = `${item.desc} - ${item.calories} kcal`;
+                        textSpan.textContent = `${item.desc} - ${item.calories} kcal`;
                     } else {
-                        li.textContent = `${item.name} - ${item.calories} kcal / ${item.protein}g 蛋白`;
+                        textSpan.textContent = `${item.name} - ${item.calories} kcal / ${item.protein}g 蛋白`;
                     }
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-btn';
+                    deleteBtn.innerHTML = '&times;';
+                    deleteBtn.dataset.type = key;
+                    deleteBtn.dataset.index = index;
+                    li.appendChild(textSpan);
+                    li.appendChild(deleteBtn);
                     listEl.appendChild(li);
                 });
             }
@@ -100,19 +131,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function handleDelete(type, index) {
+        if (todayLog[type]) {
+            todayLog[type].splice(index, 1);
+            saveData();
+            render();
+        }
+    }
+
     function handleAddFood(mealType) {
         const inputEl = document.getElementById(`${mealType}-input`);
         const foodName = inputEl.value.trim();
         if (!foodName) return;
+
+        // 使用 includes 來做模糊搜尋，找到第一個匹配的食物
         const foodItem = foodDatabase.find(food => food.name.includes(foodName));
+        
         if (foodItem) {
             if (!todayLog[mealType]) todayLog[mealType] = [];
-            todayLog[mealType].push(foodItem);
+            // 複製一份物件，避免未來修改資料庫時影響到已記錄的項目
+            todayLog[mealType].push(JSON.parse(JSON.stringify(foodItem)));
             saveData();
             render();
             inputEl.value = '';
         } else {
-            alert('在簡易資料庫中找不到這個食物喔！');
+            alert('在我們的資料庫中找不到這個食物喔！');
         }
     }
     
@@ -158,10 +201,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1500);
     });
 
+    mainAppSection.addEventListener('click', (event) => {
+        if (event.target.classList.contains('delete-btn')) {
+            const type = event.target.dataset.type;
+            const index = parseInt(event.target.dataset.index);
+            handleDelete(type, index);
+        }
+    });
+    
     mealButtons.forEach(button => { button.addEventListener('click', () => { const mealType = button.dataset.meal; handleAddFood(mealType); }); });
     exerciseBtn.addEventListener('click', handleAddExercise);
 
-    loadData();
-    if (userProfile) { showMainApp(userProfile); render(); } 
-    else { profileSection.classList.remove('hidden'); }
+    // --- E. 初始載入 (改為非同步) ---
+    async function initializeApp() {
+        await loadFoodDatabase();
+        loadData();
+        if (userProfile) {
+            showMainApp(userProfile);
+            render();
+        } else {
+            profileSection.classList.remove('hidden');
+        }
+    }
+    
+    initializeApp();
 });

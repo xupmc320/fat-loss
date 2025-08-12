@@ -182,3 +182,24 @@ button:hover, button[type="submit"]:hover {
     color: #1b4f72;
     line-height: 1.6;
 }
+/* --- 刪除按鈕樣式 --- */
+.log-list li {
+    display: flex; /* 讓文字和按鈕可以並排 */
+    justify-content: space-between; /* 讓文字靠左，按鈕靠右 */
+    align-items: center;
+    padding: 8px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    color: #cc0000; /* 紅色，代表危險操作 */
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px;
+}
+
+.delete-btn:hover {
+    color: #ff4444;
+}
