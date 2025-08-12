@@ -1,4 +1,6 @@
-/* 基本設定 */
+/* ... (舊的 CSS 內容可以保留，下面是新增與修改的部分) ... */
+/* 為了確保一致，建議您直接完整替換 */
+
 :root {
     --primary-color: #4a90e2;
     --background-color: #f4f7f6;
@@ -31,12 +33,11 @@ header h1 {
     color: var(--primary-color);
 }
 
-header .subtitle {
+header .subtitle, #tdee-display {
     color: var(--subtle-text-color);
     margin: 5px 0 0 0;
 }
 
-/* 卡片式佈局 */
 .card {
     background-color: var(--card-background);
     border-radius: 12px;
@@ -52,81 +53,73 @@ header .subtitle {
     margin-bottom: 20px;
 }
 
-/* 飲食與運動表單 */
-.food-selector, .exercise-form {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+/* 個人資料表單樣式 */
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
 }
 
-input[type="text"], input[type="number"] {
-    flex-grow: 1;
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: var(--subtle-text-color);
+}
+
+.form-group div {
+    display: flex;
+    align-items: center;
+}
+
+.form-group input[type="radio"] {
+    margin-right: 5px;
+}
+
+.form-group label[for="male"], .form-group label[for="female"] {
+    font-weight: normal;
+    margin-right: 15px;
+}
+
+.full-width {
+    grid-column: 1 / -1; /* 佔滿整行 */
+}
+
+input[type="number"], select {
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-button {
-    padding: 10px 15px;
+button[type="submit"] {
+    padding: 12px 20px;
     border: none;
     background-color: var(--primary-color);
     color: white;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px;
     transition: background-color 0.2s;
+    margin-top: 10px;
 }
 
-button:hover {
+button[type="submit"]:hover {
     background-color: #357abd;
 }
 
-/* 紀錄列表 */
-.log-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-.log-list .placeholder {
-    color: var(--subtle-text-color);
+#tdee-result {
+    margin-top: 20px;
     text-align: center;
-    padding: 20px 0;
+    font-size: 1.2em;
 }
 
-/* 運動區塊的特殊樣式 */
-.bonus-card {
-    border: 2px dashed var(--bonus-border-color);
-}
-
-.bonus-card h2 {
-    color: var(--bonus-border-color);
-}
-
-.bonus-card button {
-    background-color: var(--bonus-border-color);
-}
-
-.bonus-card button:hover {
-    background-color: #27ae60;
-}
-
-/* 總結區塊 */
-.summary-grid {
-    display: flex;
-    justify-content: space-around;
-    text-align: center;
-}
-
-.summary-label {
-    margin: 0 0 5px 0;
-    color: var(--subtle-text-color);
-}
-
-.summary-value {
-    margin: 0;
-    font-size: 1.8em;
-    font-weight: bold;
-    color: var(--primary-color);
+.hidden {
+    display: none;
 }

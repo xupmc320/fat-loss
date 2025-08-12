@@ -3,58 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>減脂小幫手</title>
+    <title>減脂小幫手 v2.0</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>減脂日誌</h1>
-            <p class="subtitle">簡單，才能持之以恆</p>
-        </header>
-
-        <main>
+        <div id="profile-section">
+            <header>
+                <h1>歡迎使用 減脂小幫手</h1>
+                <p class="subtitle">請先輸入您的基本資料，讓我們為您量身打造計畫</p>
+            </header>
             <section class="card">
-                <h2>今日飲食</h2>
-                <div class="food-selector">
-                    <label for="food-search">新增食物：</label>
-                    <input type="text" id="food-search" placeholder="搜尋食物 (例：雞腿)">
-                    <button id="add-food-btn">新增</button>
-                </div>
-                <ul id="daily-log-list" class="log-list">
-                    <li class="placeholder">今天還沒有紀錄喔！</li>
-                </ul>
+                <h2>個人資料</h2>
+                <form id="profile-form" class="profile-grid">
+                    <div class="form-group">
+                        <label>性別</label>
+                        <div>
+                            <input type="radio" name="gender" value="male" id="male" checked><label for="male">男</label>
+                            <input type="radio" name="gender" value="female" id="female"><label for="female">女</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="age">年齡</label>
+                        <input type="number" id="age" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="weight">體重 (kg)</label>
+                        <input type="number" id="weight" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="height">身高 (cm)</label>
+                        <input type="number" id="height" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="activity-level">活動量</label>
+                        <select id="activity-level">
+                            <option value="1.2">久坐 (辦公室工作)</option>
+                            <option value="1.375">輕度活動 (每週運動1-3天)</option>
+                            <option value="1.55">中度活動 (每週運動3-5天)</option>
+                            <option value="1.725">高度活動 (每週運動6-7天)</option>
+                            <option value="1.9">極度活動 (體力勞動或專業運動員)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="full-width">計算 TDEE 並開始</button>
+                </form>
+                <div id="tdee-result" class="hidden"></div>
             </section>
+        </div>
 
-            <section class="card bonus-card">
-                <h2>今日活動 (加分項！)</h2>
-                <div class="exercise-form">
-                    <input type="text" id="exercise-desc" placeholder="活動描述 (例：快走30分鐘)">
-                    <input type="number" id="exercise-calories" placeholder="消耗熱量(可選填)">
-                    <button id="add-exercise-btn">記錄活動</button>
-                </div>
-                <ul id="exercise-log-list" class="log-list">
-                    </ul>
-            </section>
-
-            <section class="card summary-card">
-                <h2>今日總結</h2>
-                <div class="summary-grid">
-                    <div>
-                        <p class="summary-label">攝取熱量</p>
-                        <p id="total-calories" class="summary-value">0 kcal</p>
-                    </div>
-                    <div>
-                        <p class="summary-label">消耗熱量</p>
-                        <p id="burned-calories" class="summary-value">0 kcal</p>
-                    </div>
-                    <div>
-                        <p class="summary-label">熱量結餘</p>
-                        <p id="balance-calories" class="summary-value">0 kcal</p>
-                    </div>
-                </div>
-            </section>
-        </main>
+        <div id="main-app" class="hidden">
+            <header>
+                <h1>減脂日誌</h1>
+                <p id="tdee-display" class="subtitle"></p>
+            </header>
+            <main>
+                <section class="card">
+                    <h2>今日飲食 (建構中)</h2>
+                </section>
+            </main>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
